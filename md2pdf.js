@@ -133,10 +133,11 @@ function toHtml(md) {
     font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
     font-size: 11pt; line-height: 1.55; color: #1a1a1a;
   }
-  h1 { font-size: 22pt; margin: 1.2em 0 0.6em; page-break-after: avoid; }
-  h2 { font-size: 16pt; margin: 1.1em 0 0.5em; page-break-after: avoid;
+  /* 标题尽量不与后文拆开；大图场景靠 img max-height 保证同页可放下 */
+  h1 { font-size: 22pt; margin: 1.2em 0 0.5em; page-break-after: avoid; break-after: avoid; }
+  h2 { font-size: 16pt; margin: 1.1em 0 0.4em; page-break-after: avoid; break-after: avoid;
        border-bottom: 1px solid #ddd; padding-bottom: 0.2em; }
-  h3 { font-size: 13pt; margin: 1em 0 0.4em; page-break-after: avoid; }
+  h3 { font-size: 13pt; margin: 1em 0 0.35em; page-break-after: avoid; break-after: avoid; }
   table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 9.5pt; }
   th, td { border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; }
   th { background: #f5f5f5; }
@@ -145,7 +146,20 @@ function toHtml(md) {
     background: #f7f7f7; border: 1px solid #e5e5e5; padding: 8px 10px;
     white-space: pre-wrap; word-break: break-word;
   }
-  img { max-width: 100%; height: auto; page-break-inside: avoid; }
+  /* 限高：避免竖长图高于页内可用高度时，整图被推到下一页、标题下留大片空白 */
+  img {
+    max-width: 100%;
+    max-height: 230mm;
+    height: auto;
+    object-fit: contain;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* 标题紧跟图时收紧间距，减少同页浪费 */
+  h1 + p > img:only-child,
+  h2 + p > img:only-child,
+  h3 + p > img:only-child,
+  h1 + img, h2 + img, h3 + img { margin-top: 0.2em; }
   blockquote {
     margin: 0.6em 0; padding: 0.3em 0.8em; border-left: 3px solid #999;
     color: #444; background: #fafafa;
