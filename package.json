@@ -1,0 +1,16 @@
+{
+  "name": "md2pdf",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Markdown → PDF（文内目录 + PDF 书签），依赖本机 Chrome",
+  "bin": {
+    "md2pdf": "./md2pdf.js"
+  },
+  "scripts": {
+    "md2pdf": "node md2pdf.js"
+  },
+  "dependencies": {
+    "marked": "^15.0.0",
+    "puppeteer-core": "^24.0.0"
+  }
+}
