@@ -53,6 +53,11 @@ function slugify(text, used) {
   return slug;
 }
 
+function headingPlainText(raw) {
+  const s = String(raw).replace(/\s+#+\s*$/, "").trim();
+  return marked.parseInline(s).replace(/<[^>]+>/g, "");
+}
+
 function extractHeadings(md) {
   const lines = md.split(/\r?\n/);
   const headings = [];
@@ -65,9 +70,10 @@ function extractHeadings(md) {
     if (inFence) continue;
     const m = /^(#{1,3})\s+(.+?)\s*$/.exec(line);
     if (m) {
+      const raw = m[2].replace(/\s+#+\s*$/, "").trim();
       headings.push({
         level: m[1].length,
-        text: m[2].replace(/\s+#+\s*$/, "").trim(),
+        text: headingPlainText(raw),
       });
     }
   }
@@ -116,9 +122,9 @@ function toHtml(md) {
   renderer.heading = function (token) {
     const depth = token.depth;
     const text =
-      typeof token.text === "string"
-        ? token.text
-        : this.parser.parseInline(token.tokens);
+      token.tokens && token.tokens.length
+        ? this.parser.parseInline(token.tokens)
+        : marked.parseInline(String(token.text || ""));
     const id = slugify(String(text).replace(/<[^>]+>/g, ""), used);
     return `<h${depth} id="${id}">${text}</h${depth}>\n`;
   };
